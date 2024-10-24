@@ -11,7 +11,5 @@ export const courseSchema = z.object({
     videoFile: z.instanceof(iServer ? File : FileList, {
         message: 'video should be a file'
     }).optional()
-    
-
 })
 
