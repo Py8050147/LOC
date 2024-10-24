@@ -57,7 +57,28 @@ export const tweets = pgTable('tweets', {
 export const ideSessions = pgTable('ideSessions', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    courseId: integer('courseId_id').references(() => courses.id, {onDelete: 'cascade'}).notNull(),
     sessionData: text('sessionData'),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+export const comments = pgTable('comments', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    tweetId: integer('tweet_Id').references(() => tweets.id, { onDelete: 'cascade' }).notNull(),
+    communityId: integer('community_Id').references(() => community.id, {onDelete: 'cascade'}).notNull(),
+    content: text('content'),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+export const likes = pgTable('likes', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    tweetId: integer('tweet_id').references(() => tweets.id, { onDelete: 'cascade' }).notNull(),
+    communityId: integer('community_id').references(() => community.id, { onDelete: 'cascade' }).notNull(),
+    coursesId: integer('courses_Id').references(() => courses.id, { onDelete: 'cascade' }).notNull(),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
 })
