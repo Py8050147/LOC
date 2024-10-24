@@ -24,3 +24,22 @@ export const courses = pgTable('courses', {
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
 })
+
+export const notes = pgTable('notes', {
+    id: serial('id').primaryKey(),
+    courseId: integer('course_id').references(() => courses.id, { onDelete: 'cascade' }).notNull(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    content: text('content'),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+export const community = pgTable('community', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    courseId: integer('course_id').references(() => courses.id, { onDelete: 'cascade' }).notNull(),
+    content: text('content'),
+    image: text('image'),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
