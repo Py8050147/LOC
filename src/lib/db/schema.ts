@@ -43,3 +43,21 @@ export const community = pgTable('community', {
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
 })
+
+export const tweets = pgTable('tweets', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    communityId: integer('community_id').references(() => community.id, { onDelete: 'cascade' }).notNull(),
+    content: text('content'),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+// this models create online Ide (codeEditor)
+export const ideSessions = pgTable('ideSessions', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    sessionData: text('sessionData'),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})

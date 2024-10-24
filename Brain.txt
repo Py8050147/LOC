@@ -1,0 +1,2 @@
+1. set data models and generate and migarte
+2. courses api createing and testing 
