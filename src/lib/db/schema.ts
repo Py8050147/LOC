@@ -20,7 +20,7 @@ export const courses = pgTable('courses', {
     description: text('description'),
     image: text('image'),
     videoFile: text('videoFile'),
-    instructorId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    instructorId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
 })
@@ -57,7 +57,7 @@ export const tweets = pgTable('tweets', {
 export const ideSessions = pgTable('ideSessions', {
     id: serial('id').primaryKey(),
     userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
-    courseId: integer('courseId_id').references(() => courses.id, {onDelete: 'cascade'}).notNull(),
+    courseId: integer('courseId_id').references(() => courses.id, {onDelete: 'set null'}),
     sessionData: text('sessionData'),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
