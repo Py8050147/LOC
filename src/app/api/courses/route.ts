@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from "@/lib/db/db";
 import { courses } from "@/lib/db/schema";
 import { courseSchema, isServer } from "@/validators/coursesSchema";
 import { MakeDirectoryOptions } from "node:fs";
 import { writeFile, mkdir, unlink } from "node:fs/promises";
 import path from "node:path";
+import { desc } from "drizzle-orm";
 
 export async function POST(request: Request) {
     const data = await request.formData()
@@ -70,7 +72,11 @@ export async function POST(request: Request) {
     return Response.json({message: 'ok'}, {status: 200})
 }
 
-// return Response.json(
-//     { message: 'Failed to store courses into the database' },
-//     { status: 500 }
-// );
+export async function GET() {
+    try {
+        const allCourses = await db.select().from(courses).orderBy(desc(courses.id))
+        return Response.json(allCourses)
+    } catch (error) {
+        return Response.json({ message: 'Failed to fetch products' }, { status: 500 });
+    }
+}
