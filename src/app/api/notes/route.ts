@@ -28,7 +28,8 @@ export async function GET() {
       const allNotes = await db.select({
          id: notes.id,
          course: courses.title,
-         user:(users.fname, users.lname),
+         user: (users.fname, users.lname),
+         content: notes.content
       })
          .from(notes)
          .leftJoin(courses, eq(notes.courseId, courses.id))

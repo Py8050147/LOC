@@ -2,6 +2,6 @@ import { z } from "zod"
 
 export const ideSessionSchema = z.object({
     sessionData: z.string({ message: 'sessionData should be a sting' }),
-    userId: z.string({ message: 'userId should be a string' }),
-    courseId: z.string({ message: 'courseId should be a string' })
+    userId: z.number({ message: 'userId should be a number' }),
+    courseId: z.number({ message: 'courseId should be a number' })
 })

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const likeSchema = z.object({
-    userId: z.string({ message: 'userId should be string' }),
-    tweetId: z.string({ message: 'tweetId should be string' }),
-    communityId: z.string({ message: 'communityId should be string' }),
-    courseId: z.string({ message: 'courseId should be a string' })
+    userId: z.number({ message: 'userId should be number' }),
+    tweetId: z.number({ message: 'tweetId should be number' }),
+    communityId: z.number({ message: 'communityId should be number' }),
+    courseId: z.number({ message: 'courseId should be a number' })
 })
