@@ -7,11 +7,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Courses } from '../../../../../types';
+import { Course } from '../../../../../types';
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 
-export const columns: ColumnDef<Courses>[] = [
+export const columns: ColumnDef<Course>[] = [
     {
         accessorKey: 'title',
         header: 'Title',

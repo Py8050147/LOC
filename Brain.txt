@@ -1,2 +1,18 @@
-1. set data models and generate and migarte
-2. courses api createing and testing 
+[
+write all schema models types [courses, notes, community, any ]
+with admin page
+next days
+https/api.tsx when write all api in this file
+create admin page with courses page (crud operations)
+notes page(crud operations) with api
+community page(crud operations) with api
+
+
+next tasks
+with client side
+1. create api for courses
+2. create api for notes
+3. create api for community
+4. create api for code editor
+5. create api for user profile
+]

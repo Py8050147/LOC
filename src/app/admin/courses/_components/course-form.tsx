@@ -68,7 +68,7 @@ const CreateCoursesForm = ({
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Brief course description" {...field} />
+                                <Textarea data-gramm="false" placeholder="Brief course description" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -76,7 +76,7 @@ const CreateCoursesForm = ({
                 />
                  <FormField
                     control={form.control}
-                    name="description"
+                    name="image"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Image</FormLabel>
@@ -89,7 +89,7 @@ const CreateCoursesForm = ({
                 />
                <FormField
                     control={form.control}
-                    name="description"
+                    name="videoFile"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Video</FormLabel>

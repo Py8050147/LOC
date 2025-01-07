@@ -70,6 +70,7 @@ export const tweets = pgTable("tweets", {
     .references(() => community.id, { onDelete: "cascade" })
     .notNull(),
   content: text("content"),
+  image: text('text'),
   updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
@@ -99,6 +100,7 @@ export const comments = pgTable("comments", {
   communityId: integer("community_Id")
     .references(() => community.id, { onDelete: "cascade" })
     .notNull(),
+  
   content: text("content"),
   updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
