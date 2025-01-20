@@ -13,13 +13,11 @@ export async function POST(request: Request) {
   try {
     validatedData = await communitySchema.parse({
       content: data.get("content"),
-      image: data.get("image"),
-      userId: data.get("userId"), // Ensure these fields are included in the formData
+      image: data.get("image"), // This can be null or undefined
+      userId: data.get("userId"),
       courseId: data.get("courseId"),
     });
-    // console.log("Validated Data:", validatedData);
   } catch (error) {
-    // console.error('Validation Error:', error);
     return Response.json(
       { message: error || "Validation failed" },
       { status: 400 }
@@ -28,38 +26,34 @@ export async function POST(request: Request) {
 
   const inputImage = isServer
     ? (validatedData.image as File)
-    : (validatedData.image as FileList)[0];
+    : (validatedData.image as FileList)?.[0];
 
-  if (!inputImage) {
-    return Response.json(
-      { message: "No image file provided" },
-      { status: 400 }
-    );
-  }
+  let fileName = null; // Default to null if no image is provided
 
-  const fileName = `${Date.now()}.${inputImage.name.split(".").pop()}`;
-  const assetsDir = path.join(process.cwd(), "public/assets");
-  const imagePath = path.join(assetsDir, fileName);
+  if (inputImage) {
+    fileName = `${Date.now()}.${inputImage.name.split(".").pop()}`;
+    const assetsDir = path.join(process.cwd(), "public/assets");
+    const imagePath = path.join(assetsDir, fileName);
 
-  console.log("Image Path:", imagePath);
+    console.log("Image Path:", imagePath);
 
-  try {
-    await mkdir(assetsDir, { recursive: true });
-    const buffer = Buffer.from(await inputImage.arrayBuffer());
-    await writeFile(imagePath, buffer);
-    console.log("Image saved successfully");
-  } catch (error) {
-    // console.error('File Save Error:', error);
-    return Response.json(
-      { message: "Failed to save the file to the filesystem" },
-      { status: 500 }
-    );
+    try {
+      await mkdir(assetsDir, { recursive: true });
+      const buffer = Buffer.from(await inputImage.arrayBuffer());
+      await writeFile(imagePath, buffer);
+      console.log("Image saved successfully");
+    } catch (error) {
+      return Response.json(
+        { message: "Failed to save the file to the filesystem" },
+        { status: 500 }
+      );
+    }
   }
 
   try {
     await db.insert(community).values({
       ...validatedData,
-      image: fileName,
+      image: fileName || "default-image.jpg" , // Store the file name or null
     });
     return Response.json({ message: "ok" }, { status: 200 });
   } catch (error) {
@@ -70,6 +64,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
 
 export async function GET() {
   try {

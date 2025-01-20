@@ -2,43 +2,28 @@
 import { db } from "@/lib/db/db";
 import { courses } from "@/lib/db/schema";
 import { courseSchema, isServer } from "@/validators/coursesSchema";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import s3Client from "@/lib/s3Client";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { desc } from "drizzle-orm";
 
-const s3client = new S3Client({
-  region: "eu-north-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-  // Increase timeout settings
-  // requestHandler: {
-  //   metadataProvider: () => Promise.resolve({}),
-  //   destroy: () => {},
-  //   handle: (request, options) => {
-  //     const httpOptions = {
-  //       timeout: 30000, // 30 seconds timeout
-  //       connectTimeout: 10000, // 10 seconds connection timeout
-  //     };
-  //     return s3client.config.requestHandler.handle(request, { ...options, ...httpOptions });
-  //   },
-  // },
-});
+
 
 export async function POST(request: Request) {
   const data = await request.formData();
   let validatedData;
-  
+  console.log('validatedData', validatedData)
 
   try {
     // Validate incoming data
      validatedData = await courseSchema.parse({
       title: data.get("title") as string,
       description: data.get("description") as string,
-      image: data.get("image") as string,
-      videoFile: data.get("videoFile") as string,
-    });
+      image: data.get("image"),
+      videoFile: data.get("videoFile"),
+     });
+    
+    console.log('validatedData', validatedData)
 
     // Get files from FormData
     const inputImage = isServer ? validatedData.image as File : (validatedData.image as FileList)[0];
@@ -56,30 +41,31 @@ export async function POST(request: Request) {
     const imageParams = {
       Bucket: "coderspankaj",
       Key: imageFilename,
-      Body: new Uint8Array(await inputImage.arrayBuffer()),
+      Body: Buffer.from(await inputImage.arrayBuffer()),
       ContentType: inputImage.type,
     };
 
     const videoParams = {
       Bucket: "coderspankaj",
       Key: videoFilename,
-      Body: new Uint8Array(await inputVideoFile.arrayBuffer()),
+      Body: Buffer.from(await inputVideoFile.arrayBuffer()),
       ContentType: inputVideoFile.type,
     };
+    console.log('videoParams', videoParams)
 
     // Upload files to S3
-    await s3client.send(new PutObjectCommand(imageParams));
-    await s3client.send(new PutObjectCommand(videoParams));
+    await s3Client.send(new PutObjectCommand(imageParams));
+    await s3Client.send(new PutObjectCommand(videoParams));
 
     // Generate signed URLs
     const imageSignedUrl = await getSignedUrl(
-      s3client,
+      s3Client,
       new GetObjectCommand({ Bucket: "coderspankaj", Key: imageFilename }),
       { expiresIn: 3600 } // 1-hour expiry
     );
 
     const videoSignedUrl = await getSignedUrl(
-      s3client,
+      s3Client,
       new GetObjectCommand({ Bucket: "coderspankaj", Key: videoFilename }),
       { expiresIn: 3600 }
     );
@@ -95,6 +81,7 @@ export async function POST(request: Request) {
     return new Response(
       JSON.stringify({
         message: "Files uploaded successfully and metadata saved",
+        result,
         imageSignedUrl,
         videoSignedUrl,
       }),
@@ -113,13 +100,13 @@ export async function GET() {
   try {
     // Fetch all courses from the database
     const allCourses = await db.select().from(courses).orderBy(desc(courses.id));
-    // console.log("allCourses",allCourses);
+    console.log("allCourses",allCourses);
 
     // Generate signed URLs for each course
     const coursesWithUrls = await Promise.all(
         allCourses.map(async (course) => {
         const imageSignedUrl = await getSignedUrl(
-          s3client,
+          s3Client,
           new GetObjectCommand({
             Bucket: "coderspankaj",
             Key: course.image || "",
@@ -128,7 +115,7 @@ export async function GET() {
         );
 
         const videoSignedUrl = await getSignedUrl(
-          s3client,
+          s3Client,
           new GetObjectCommand({
             Bucket: "coderspankaj",
             Key: course.videoFile || "",

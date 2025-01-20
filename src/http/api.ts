@@ -1,47 +1,48 @@
 // import { Courses } from "../../types";
+import { Comment } from "../../types";
 
 import { api } from "./client";
 
 export const getAllCourses = async () => {
     const response = await api.get('/courses');
-    // console.log(response.data)
+    console.log(response.data)
     return  response.data;
 }; 
 
 export const createCourses = async (data: FormData) => {
-    try {
-      const response = await api.post('/courses', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true, // Ensures cookies or tokens are sent with the request
-      });
-  
-      console.log("Response Data:", response.data);
-  
-      return response.data;
-    } catch (error: any) {
-      // Improved error handling
-      if (error.response) {
-        // Server responded with a status other than 2xx
-        console.error("Server Error:", error.response.data);
-        throw new Error(error.response.data.message || "Server error occurred.");
-      } else if (error.request) {
-        // Request was sent, but no response was received
-        console.error("Network Error: No response received.");
-        throw new Error("Network error. Please try again later.");
-      } else {
-        // Something else went wrong in setting up the request
-        console.error("Error:", error.message);
-        throw new Error(error.message || "An unknown error occurred.");
-      }
-    }
-  };
+  const response = await api.post('/courses', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    withCredentials: true,
+  })
+  console.log(response)
+  return response.data;
+}
   
 
 export const getSingleCourses = async (id: string) => {
+  try {
     console.log(`Fetching course with ID: ${id}`);
     const response = await api.get(`/courses/${id}`);
     console.log('API response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch course with ID ${id}:`, error);
+    throw error; // Ensure the error propagates to React Query
+  }
+};
+
+
+
+export const Createcomments = async (data: Comment) => {
+    const response = await api.post("/comments", data);
+    console.log("Comment posted successfully:", response.data); // Debugging log
+    return response.data;
+};
+
+export const getAllComments = async (id: string) => {
+  const response = await api.get(`/comments?courseId=${id}`);
+    console.log("All comments:", response.data); // Debugging log
     return response.data;
 };

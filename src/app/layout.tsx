@@ -1,8 +1,15 @@
+"use strict";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-providers";
-
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
 
 
 const geistSans = localFont({
@@ -27,15 +34,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-        <QueryProvider>
-        {children}
-      </QueryProvider>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+          </SignedIn>
+          <QueryProvider>
+          {children}
+          </QueryProvider>
+        
       </body>
-     
     </html>
+  </ClerkProvider>
   );
 }
+
+
+//  className={`${geistSans.variable} ${geistMono.variable} antialiased`

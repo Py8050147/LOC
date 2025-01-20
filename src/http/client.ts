@@ -8,3 +8,11 @@ export const api = axios.create({
         Accept: 'application/json',
     },
 });
+
+// api.interceptors.response.use(
+//     (response) => response, // Pass through successful responses
+//     (error) => {
+//         console.error("API Error:", error.response || error.message);
+//         return Promise.reject(error); // Forward the error
+//     }
+// );

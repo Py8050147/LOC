@@ -1,24 +1,12 @@
-import { withAuth } from 'next-auth/middleware'
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default withAuth({
-    callbacks: {
-        authorized: ({token, req}) => {
-            console.log('token', token);
-
-            if (req.nextUrl.pathname.startsWith('/admin')) {
-                return token?.role === 'admin';
-            } else if (req.nextUrl.pathname.startsWith('/account')) {
-                return token?.role === 'user';
-            } else {
-                return false;
-            }
-        } 
-
-        }
-})
-
-
+export default clerkMiddleware();
 
 export const config = {
-    matcher: ['/admin(/.*)?', '/account(/.*)?'],
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
 };

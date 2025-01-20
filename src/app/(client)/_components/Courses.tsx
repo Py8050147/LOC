@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
+// import { date } from 'drizzle-orm/mysql-core';
 
 // Import and configure the font
 const poppins = Poppins({
@@ -18,7 +19,10 @@ const Courses = () => {
     const { data: courses, isLoading, isError, error } = useQuery({
         queryKey: ['courses'],
         queryFn: getAllCourses,
+        staleTime: 10 * 1000,
     });
+
+    console.log('data', courses)
 
     if (isLoading) {
         return (
