@@ -1,0 +1,1 @@
+ALTER TABLE "comments" ALTER COLUMN "community_Id" DROP NOT NULL;
